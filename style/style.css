@@ -1,0 +1,79 @@
+/* ... (mantener lo anterior y añadir/cambiar esto) ... */
+
+#letter-container {
+    display: none;
+    width: 100%;
+    max-width: 450px;
+    background: var(--paper);
+    padding: 40px;
+    border-radius: 5px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    transition: transform 0.8s ease-in-out, opacity 0.8s;
+}
+
+/* Animación de desaparición hacia arriba */
+.fade-up-out {
+    transform: translateY(-100vh) !important;
+    opacity: 0;
+}
+
+/* Efecto de desglose hacia abajo para las páginas */
+.page {
+    display: none;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 1.2s ease-in-out;
+}
+
+.page.active {
+    display: block;
+    max-height: 2000px; /* Permite que se "desglose" */
+    animation: slideDown 1s forwards;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Contenedor del Regalo (La pequeña hoja doblada) */
+#gift-screen {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 100vh); /* Empieza abajo del todo */
+    transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 100;
+}
+
+#gift-screen.visible {
+    transform: translate(-50%, -50%); /* Sube al centro */
+}
+
+.folded-paper {
+    width: 300px;
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    position: relative;
+    transition: all 0.8s ease;
+}
+
+/* Animación de la hoja abriéndose hacia arriba */
+.folded-paper.open {
+    padding-top: 100px;
+    transform: scaleY(1.2);
+}
+
+#final-gift {
+    display: none;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+#final-gift.reveal {
+    display: block;
+    opacity: 1;
+}

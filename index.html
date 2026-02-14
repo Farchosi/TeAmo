@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para mi gran amor 💌</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        :root {
+            --paper: rgba(255, 250, 240, 0.92);
+            --red: #d63031;
+            --accent: #fab1a0;
+        }
+
+        * { box-sizing: border-box; }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Quicksand', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Fondo Animado */
+        .background-slideshow {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0; left: 0;
+            z-index: -1;
+        }
+
+        .bg-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            animation: slideShow 15s linear infinite;
+        }
+
+        .bg-slide:nth-child(2) { animation-delay: 5s; }
+        .bg-slide:nth-child(3) { animation-delay: 10s; }
+
+        @keyframes slideShow {
+            0% { opacity: 0; }
+            10% { opacity: 0.6; }
+            33% { opacity: 0.6; }
+            43% { opacity: 0; }
+            100% { opacity: 0; }
+        }
+
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 50px 20px;
+        }
+
+        /* Sobre Inicial */
+        #envelope {
+            width: 280px;
+            height: 180px;
+            background: var(--red);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            transition: transform 0.4s ease;
+            z-index: 10;
+        }
+
+        #envelope:hover { transform: scale(1.05) rotate(2deg); }
+
+        .heart-icon { font-size: 3rem; margin-bottom: 10px; }
+
+        /* Contenedor de la Carta */
+        #letter-container {
+            display: none;
+            width: 100%;
+            max-width: 480px;
+            background: var(--paper);
+            padding: 40px;
+            border-radius: 4px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            transition: transform 0.8s ease-in-out, opacity 0.8s;
+            position: relative;
+        }
+
+        .fade-up-out {
+            transform: translateY(-120vh) !important;
+            opacity: 0;
+        }
+
+        /* Páginas y Desglose */
+        .page {
+            display: none;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .page.active {
+            display: block;
+            animation: unfoldDown 1s forwards;
+        }
+
+        @keyframes unfoldDown {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 { font-family: 'Dancing Script', cursive; font-size: 2.5rem; color: var(--red); margin: 20px 0; }
+
+        /* Estampillas */
+        .stamps-container {
+            display: flex;
+            justify-content: space-evenly;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stamp-frame {
+            background: #fff;
+            padding: 5px;
+            border: 1px solid #ddd;
+            box-shadow: 3px 3px 8px rgba(0,0,0,0.1);
+            transform: rotate(-3deg);
+        }
+
+        .stamp-frame:nth-child(even) { transform: rotate(4deg); }
+
+        .stamp-frame img { width: 100px; height: 130px; object-fit: cover; display: block; }
+
+        .content-text p { font-size: 1.15rem; line-height: 1.8; color: #333; }
+
+        /* Botones */
+        button {
+            background: var(--red);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            margin-top: 30px;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(214, 48, 49, 0.3);
+        }
+
+        button:hover { transform: translateY(-3px); background: #b32626; }
+
+        /* Regalo Final */
+        #gift-screen {
+            display: none;
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, 100vh);
+            transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 100;
+        }
+
+        #gift-screen.visible { transform: translate(-50%, -50%); }
+
+        .folded-paper {
+            width: 320px;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border: 1px solid #eee;
+            transition: all 0.8s ease;
+        }
+
+        .folded-paper.open {
+            padding-top: 60px;
+            transform: scale(1.1);
+            background: #fffcf0;
+        }
+
+        #final-gift-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+
+        #final-gift-content.reveal { display: block; opacity: 1; }
+
+    </style>
+</head>
+<body>
+
+    <div class="background-slideshow">
+        <div class="bg-slide" style="background-image: url('img/160eaf41-2b40-47c7-8e56-456c449a0716.jfif');"></div>
+        <div class="bg-slide" style="background-image: url('img/927d018c-8ec6-40a0-8598-1899da746013.jfif');"></div>
+        <div class="bg-slide" style="background-image: url('img/44310157-72d9-4269-b5a2-91c6e32f9294.jfif');"></div>
+    </div>
+
+    <div class="main-wrapper">
+        <div id="envelope" onclick="openLetter()">
+            <div class="heart-icon">❤️</div>
+            <p>Para Ti</p>
+        </div>
+
+        <div id="letter-container">
+            <div class="page active" id="p1">
+                <div class="stamps-container">
+                    <div class="stamp-frame"><img src="img/foto1.jfif" alt="1"></div>
+                    <div class="stamp-frame"><img src="img/foto2.jfif" alt="2"></div>
+                </div>
+                <h2>El Comienzo</h2>
+                <div class="content-text">
+                    <p>Aquí puedes escribir sobre cómo empezó todo. Cada palabra es un trozo de mi corazón dedicado a ti.</p>
+                </div>
+                <button onclick="nextPage(2)">Bajar un poco más ✨</button>
+            </div>
+
+            <div class="page" id="p2">
+                <div class="stamps-container">
+                    <div class="stamp-frame"><img src="img/foto3.jfif" alt="3"></div>
+                    <div class="stamp-frame"><img src="img/foto4.jfif" alt="4"></div>
+                </div>
+                <h2>Momentos</h2>
+                <div class="content-text">
+                    <p>Cada risa compartida y cada silencio cómodo me confirman que eres la persona correcta.</p>
+                </div>
+                <button onclick="nextPage(3)">Continuar bajando ✨</button>
+            </div>
+
+            <div class="page" id="p3">
+                <div class="stamps-container">
+                    <div class="stamp-frame"><img src="img/foto5.jfif" alt="5"></div>
+                    <div class="stamp-frame"><img src="img/foto6.jfif" alt="6"></div>
+                </div>
+                <h2>Aventuras</h2>
+                <div class="content-text">
+                    <p>No importa a dónde vayamos, lo que importa es que siempre caminamos de la mano.</p>
+                </div>
+                <button onclick="nextPage(4)">Ya casi... ✨</button>
+            </div>
+
+            <div class="page" id="p4">
+                <div class="stamps-container">
+                    <div class="stamp-frame"><img src="img/foto7.jfif" alt="7"></div>
+                    <div class="stamp-frame"><img src="img/foto8.jfif" alt="8"></div>
+                </div>
+                <h2>Por Siempre</h2>
+                <div class="content-text">
+                    <p>Gracias por ser mi paz y mi alegría. Te amo infinitamente. Mira lo que sigue...</p>
+                </div>
+                <button onclick="goToGift()" style="background: #f1c40f; color: #000;">Ver mi Regalo 🎁</button>
+            </div>
+        </div>
+
+        <div id="gift-screen">
+            <div class="folded-paper">
+                <button id="open-gift-btn" onclick="revealGift()">ABRE EL REGALO ❤️</button>
+                
+                <div id="final-gift-content">
+                    <h2 style="font-size: 1.8rem;">¡Sorpresa!</h2>
+                    <p>Este es tu regalo especial. (Aquí puedes poner un código, una invitación o una promesa).</p>
+                    <p>Te amo con todo mi ser.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openLetter() {
+            document.getElementById('envelope').style.display = 'none';
+            const letter = document.getElementById('letter-container');
+            letter.style.display = 'block';
+            window.scrollTo({ top: letter.offsetTop - 50, behavior: 'smooth' });
+        }
+
+        function nextPage(num) {
+            // Efecto de corazones al avanzar
+            confetti({
+                particleCount: 50,
+                spread: 60,
+                origin: { y: 0.7 },
+                colors: ['#d63031', '#fab1a0']
+            });
+
+            // Cambiar de página
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const nextPageEl = document.getElementById('p' + num);
+            nextPageEl.classList.add('active');
+
+            // Scroll automático hacia abajo para simular despliegue
+            setTimeout(() => {
+                window.scrollBy({ top: 350, behavior: 'smooth' });
+            }, 100);
+        }
+
+        function goToGift() {
+            const letter = document.getElementById('letter-container');
+            const giftScreen = document.getElementById('gift-screen');
+
+            // La carta sube y desaparece
+            letter.classList.add('fade-up-out');
+
+            setTimeout(() => {
+                letter.style.display = 'none';
+                giftScreen.style.display = 'block';
+                // El regalo sube desde el fondo
+                setTimeout(() => {
+                    giftScreen.classList.add('visible');
+                }, 100);
+            }, 800);
+        }
+
+        function revealGift() {
+            const paper = document.querySelector('.folded-paper');
+            const btn = document.getElementById('open-gift-btn');
+            const content = document.getElementById('final-gift-content');
+
+            btn.style.opacity = '0';
+            
+            setTimeout(() => {
+                btn.style.display = 'none';
+                paper.classList.add('open');
+                
+                setTimeout(() => {
+                    content.classList.add('reveal');
+                    // Lluvia final de corazones
+                    confetti({
+                        particleCount: 200,
+                        spread: 120,
+                        origin: { y: 0.5 }
+                    });
+                }, 600);
+            }, 400);
+        }
+    </script>
+</body>
+</html>
